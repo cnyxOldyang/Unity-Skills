@@ -88,7 +88,7 @@ public static object SkillName(string name, float x = 0f) { ... }
 - Every script ends with a blank line then `// Producer:Betsy` (`# Producer:Betsy` in Python) and a newline.
 
 ## Workflow and commands
-Commands are prompt files under `.claude/commands/`; agents without slash commands read the file and follow it.
+Commands are prompt files under `.claude/commands/`; agents without slash commands read the file and follow it. GitHub Copilot uses the same commands through `.github/prompts/*.prompt.md` and the scoped rules in `.github/instructions/`; `.github/copilot-instructions.md` points back to this file as the source of truth.
 - `/skillcheck` (`.claude/commands/skillcheck.md`) — C# ↔ `skills/*/SKILL.md` consistency audit and skill-count sync across `AGENTS.md`, README×2 and the root `SKILL.md`. Run after adding, renaming or removing any skill.
 - `/metacheck` (`.claude/commands/metacheck.md`) — `.meta` GUID audit; run after adding assets or `.meta` files.
 - `/updateversion <MAJOR.MINOR.PATCH>` (`.claude/commands/updateversion.md`) — bumps the declared version anchors and writes the CHANGELOG entry; verifies with `.github/scripts/check_project_version.py`. Never search-and-replace version numbers globally.

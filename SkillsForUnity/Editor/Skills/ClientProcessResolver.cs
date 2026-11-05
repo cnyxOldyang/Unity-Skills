@@ -844,7 +844,7 @@ namespace UnitySkills
             ("crush", "Crush"), // charmbracelet/crush -- confirmed via GitHub releases
             ("plandex", "Plandex"), ("pdx", "Plandex"), // confirmed via repo README + releases (both names in real use)
             ("cn", "Continue"), // npm @continuedev/cli bin=["cn"] -- not "continue"
-            ("copilot", "CopilotCLI"), // npm @github/copilot bin=["copilot"] -- not "gh copilot"
+            ("copilot", "Copilot"), ("github-copilot", "Copilot"), // npm @github/copilot bin=["copilot"] and VS Code Copilot
             ("cb", "Codebuff"), ("codebuff", "Codebuff"), // npm codebuff bin=["cb","codebuff"]
         };
 

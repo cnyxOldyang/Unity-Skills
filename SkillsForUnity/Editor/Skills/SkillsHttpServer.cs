@@ -289,6 +289,7 @@ namespace UnitySkills
         // Agent recognition table: keyword -> agent ID mapping
         private static readonly (string keyword, string agentId)[] _agentKeywords = new[]
         {
+            ("copilot", "Copilot"), ("github-copilot", "Copilot"),
             ("claude", "ClaudeCode"), ("anthropic", "ClaudeCode"),
             ("codex", "Codex"), ("openai", "Codex"),
             ("cursor", "Cursor"),

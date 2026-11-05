@@ -8,8 +8,8 @@ using UnityEditor;
 namespace UnitySkills
 {
     /// <summary>
-    /// AI Config Tab — one card per supported Agent (Claude Code / Codex /
-    /// Antigravity / Cursor / OpenCode / Kimi Code) plus a Custom Agent card.
+    /// AI Config Tab — one card per supported Agent (Claude Code / GitHub Copilot /
+    /// Antigravity / Codex / Cursor / OpenCode / Kimi Code) plus a Custom Agent card.
     /// Cards are built dynamically so adding a new agent only requires one
     /// entry in _agentConfigs.
     /// </summary>
@@ -77,6 +77,16 @@ namespace UnitySkills
                     getPath = global => global ? SkillInstaller.ClaudeGlobalPath : SkillInstaller.ClaudeProjectPath,
                     installFunc = SkillInstaller.InstallClaude,
                     uninstallFunc = SkillInstaller.UninstallClaude
+                },
+                new AgentConfig
+                {
+                    id = "github", brandClass = "brand-github",
+                    nameDisplay = "GitHub Copilot",
+                    isProjInstalled = () => SkillInstaller.IsCopilotProjectInstalled,
+                    isGlobInstalled = () => SkillInstaller.IsCopilotGlobalInstalled,
+                    getPath = global => global ? SkillInstaller.CopilotGlobalPath : SkillInstaller.CopilotProjectPath,
+                    installFunc = SkillInstaller.InstallCopilot,
+                    uninstallFunc = SkillInstaller.UninstallCopilot
                 },
                 new AgentConfig
                 {

@@ -229,6 +229,8 @@ namespace UnitySkills.Tests.Core
         {
             Assert.That(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentClaudeCode, false),
                 Is.EqualTo(Path.Combine(_tempRoot, "CLAUDE.md")));
+            Assert.That(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentCopilot, false),
+                Is.EqualTo(Path.Combine(_tempRoot, ".github", "copilot-instructions.md")));
 
             foreach (var agentId in new[]
                      {
@@ -249,6 +251,8 @@ namespace UnitySkills.Tests.Core
 
             Assert.That(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentClaudeCode, true),
                 Is.EqualTo(Path.Combine(home, ".claude", "CLAUDE.md")));
+            Assert.That(Path.GetFileName(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentCopilot, true)),
+                Is.EqualTo("copilot-instructions.md"));
             Assert.That(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentAntigravity, true),
                 Is.EqualTo(Path.Combine(home, ".gemini", "GEMINI.md")));
             Assert.That(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentOpenCode, true),

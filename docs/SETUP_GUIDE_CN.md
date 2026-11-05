@@ -78,7 +78,7 @@ references/                 # Unity 开发参考文档
 
 > **升级自动同步**：包版本变化后，下次编辑器加载时会把你已安装过的每个工具刷新到新版本，不用再点一次 Install。只更新已存在的安装；从未装过的工具不会被自动装上。覆盖方式与手动 Install 完全一致，因此对已安装副本的本地修改会被替换。每份副本都带有生成它的包版本印记：多工程共享的副本（全局作用域）若已是本版本或更新（例如已被另一个更高版本的工程刷新过），会原样保留，落后的工程不会把它降级。面板的“更新”按钮遵循同一规则，无需更新时会提示；如需强制重装，请先卸载再安装。可在 ⚙ 设置抽屉的 **AI 工具** 区关闭。
 
-> **向 Agent 指令文件写入引导语（可选，默认关闭）**：在 ⚙ 设置抽屉的 **AI 工具** 区打开「向 AI 工具的指令文件写入引导语」后，Install 与自动同步会同时往每个已安装工具的根指令文件追加一行引导语（`When working on a Unity project, use Unity Skills.`），提示 AI 优先使用 Unity Skills。项目级：Claude Code 写 `CLAUDE.md`，Codex / Antigravity / Cursor / OpenCode / Kimi Code 共用 `AGENTS.md`；全局级：`~/.claude/CLAUDE.md`、`~/.codex/AGENTS.md`、`~/.gemini/GEMINI.md`、`~/.config/opencode/AGENTS.md`、`~/.kimi-code/AGENTS.md`（Cursor 无可靠全局机制，跳过）。打开开关会立即对所有已安装工具补写；关闭开关则精确移除该行——若文件只剩这一行则删除该文件。
+> **向 Agent 指令文件写入引导语（可选，默认关闭）**：在 ⚙ 设置抽屉的 **AI 工具** 区打开「向 AI 工具的指令文件写入引导语」后，Install 与自动同步会同时往每个已安装工具的根指令文件追加一行引导语（`When working on a Unity project, use Unity Skills.`），提示 AI 优先使用 Unity Skills。项目级：Claude Code 写 `CLAUDE.md`，GitHub Copilot 写 `.github/copilot-instructions.md`，Codex / Antigravity / Cursor / OpenCode / Kimi Code 共用 `AGENTS.md`；全局级：`~/.claude/CLAUDE.md`、`~/.copilot/copilot-instructions.md`（或 `$COPILOT_HOME/copilot-instructions.md`）、`~/.codex/AGENTS.md`、`~/.gemini/GEMINI.md`、`~/.config/opencode/AGENTS.md`、`~/.kimi-code/AGENTS.md`（Cursor 无可靠全局机制，跳过）。打开开关会立即对所有已安装工具补写；关闭开关则精确移除该行——若文件只剩这一行则删除该文件。
 
 > **Codex 说明**：Antigravity 和 Codex 工作区共享 `.agents/skills/`，装一次即两边可用。Codex 自动扫描发现 skills，无需在 `AGENTS.md` 中声明。
 
@@ -96,6 +96,7 @@ references/                 # Unity 开发参考文档
 | Antigravity | `.agents/skills/` | `~/.gemini/antigravity/skills/` |
 | Codex | `.agents/skills/`（与 Antigravity 共享） | `~/.agents/skills/` |
 | Cursor | `.cursor/skills/` | `~/.cursor/skills/` |
+| GitHub Copilot | `.github/skills/` | `~/.copilot/skills/`（或 `$COPILOT_HOME/skills/`） |
 | OpenCode | `.opencode/skills/` | `~/.config/opencode/skills/` |
 | Kimi Code | `.kimi-code/skills/` | `~/.kimi-code/skills/`（或 `$KIMI_CODE_HOME/skills/`） |
 
@@ -109,6 +110,7 @@ references/                 # Unity 开发参考文档
 | **Claude Code** | ✅ | 智能 Skill 意图识别 |
 | **Codex** | ✅ | `$skill` 显式调用 + 隐式意图识别；自动扫描 `.agents/skills/` |
 | **Cursor** | ✅ | 自动扫描 `.cursor/skills/` 和 `.agents/skills/`；支持 `/skill-name` 显式触发；可在 设置 → Rules 查看已加载技能 |
+| **GitHub Copilot** | ✅ | VS Code Copilot 原生扫描 `.github/skills/`（项目）与 `~/.copilot/skills/`（个人）；技能也会出现在 `/` 命令列表 |
 | **OpenCode** | ✅ | 原生扫描工作区 `.opencode/skills/` 和全局 `~/.config/opencode/skills/` |
 | **Kimi Code** | ✅ | 原生扫描项目级 `.kimi-code/skills/` 和用户级 `~/.kimi-code/skills/`（跟随 `$KIMI_CODE_HOME`）；支持 `/skill:unity-skills` 显式触发；同时扫描 `.agents/skills/` |
 

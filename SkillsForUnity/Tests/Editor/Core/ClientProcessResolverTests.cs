@@ -317,7 +317,8 @@ namespace UnitySkills.Tests.Core
         [TestCase("plandex", "Plandex")]
         [TestCase("pdx", "Plandex")] // Plandex's other real binary name
         [TestCase("cn", "Continue")] // npm @continuedev/cli bin=["cn"] -- not "continue"
-        [TestCase("copilot", "CopilotCLI")] // npm @github/copilot bin=["copilot"] -- not "gh copilot"
+        [TestCase("copilot", "Copilot")] // npm @github/copilot bin=["copilot"] and VS Code Copilot
+        [TestCase("github-copilot", "Copilot")]
         [TestCase("cb", "Codebuff")]
         [TestCase("codebuff", "Codebuff")]
         public void NormalizeDisplayName_KnownTokens_MapToTheAgentKeywordsValue(string token, string expected)
@@ -754,6 +755,8 @@ namespace UnitySkills.Tests.Core
 
         [TestCase("claude-code", "ClaudeCode")]
         [TestCase("Claude", "ClaudeCode")]
+        [TestCase("copilot", "Copilot")]
+        [TestCase("GitHub-Copilot", "Copilot")]
         [TestCase("agy", "Antigravity")]
         [TestCase("ClaudeCode", "ClaudeCode")]
         [TestCase("MyScript", "MyScript")] // custom ids are the caller's own

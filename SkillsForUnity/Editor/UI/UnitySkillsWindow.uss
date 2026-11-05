@@ -1119,6 +1119,7 @@
 }
 
 .agent-icon.brand-claudecode  { background-color: #FFF8F4; }
+.agent-icon.brand-github      { background-color: #24292f; }
 .agent-icon.brand-codex       { background-color: #ffffff; }
 .agent-icon.brand-antigravity { background-color: #ffffff; }
 .agent-icon.brand-cursor      { background-color: #ffffff; }

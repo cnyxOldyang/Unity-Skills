@@ -22,6 +22,7 @@ namespace UnitySkills
     ///
     /// Verified per-tool instruction files (2026-09, official docs):
     ///   Claude Code  project: CLAUDE.md                 global: ~/.claude/CLAUDE.md
+    ///   GitHub Copilot project: .github/copilot-instructions.md global: ~/.copilot/copilot-instructions.md
     ///   Codex        project: AGENTS.md                 global: $CODEX_HOME/AGENTS.md (~/.codex)
     ///   Antigravity  project: AGENTS.md                 global: ~/.gemini/GEMINI.md (shared with Gemini CLI)
     ///   Cursor       project: AGENTS.md                 global: none reliable (~/.cursor/rules is not auto-loaded)
@@ -31,6 +32,7 @@ namespace UnitySkills
     public static class AgentInstructionService
     {
         internal const string AgentClaudeCode = "ClaudeCode";
+        internal const string AgentCopilot = "Copilot";
         internal const string AgentCodex = "Codex";
         internal const string AgentAntigravity = "Antigravity";
         internal const string AgentCursor = "Cursor";
@@ -39,7 +41,7 @@ namespace UnitySkills
 
         internal static readonly string[] KnownAgentIds =
         {
-            AgentClaudeCode, AgentCodex, AgentAntigravity, AgentCursor, AgentOpenCode, AgentKimiCode
+            AgentClaudeCode, AgentCopilot, AgentCodex, AgentAntigravity, AgentCursor, AgentOpenCode, AgentKimiCode
         };
 
         // Single short English line on purpose: instruction files outlive any panel language choice,
@@ -91,6 +93,10 @@ namespace UnitySkills
                     return global
                         ? Path.Combine(home, ".claude", "CLAUDE.md")
                         : Path.Combine(ProjectRoot, "CLAUDE.md");
+                case AgentCopilot:
+                    return global
+                        ? Path.Combine(SkillInstaller.CopilotHome, "copilot-instructions.md")
+                        : Path.Combine(ProjectRoot, ".github", "copilot-instructions.md");
                 case AgentCodex:
                     return global
                         ? Path.Combine(ResolveEnvHome("CODEX_HOME", ".codex"), "AGENTS.md")
@@ -116,7 +122,7 @@ namespace UnitySkills
             }
         }
 
-        // Mirrors SkillInstaller.KimiCodeHome: honors the env var, with manual "~" expansion.
+        // Mirrors SkillInstaller.ResolveHome: honors the env var, with manual "~" expansion.
         private static string ResolveEnvHome(string envVar, string defaultFolderName)
         {
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);

@@ -61,7 +61,7 @@ This project is a deep refactoring and feature extension based on the excellent 
 - 🛠️ **839 REST Skills Toolkit**: 56 source files across 54 categories, plus 29 advisory design modules, with Batch operations.
 - ⚡ **UnityCLI Support**: Bind UnityCLI to cold-start the bound project — no need to launch Unity Hub.
 - 🔐 **Three-Tier Permission Modes**: Approval / Auto / Bypass with dual approval channels, aligned with Claude Code permission modes.
-- 🤖 **6 Major IDEs Native Support**: Claude Code / Antigravity / Codex / Cursor / OpenCode / Kimi Code — one-click install and use.
+- 🤖 **7 Major IDEs Native Support**: Claude Code / GitHub Copilot / Antigravity / Codex / Cursor / OpenCode / Kimi Code — one-click install and use.
 - 🛡️ **Transactional Atomicity**: Failed operations auto-rollback, leaving scenes clean.
 - 🌍 **Multi-Instance Control**: Automatic port discovery and global registry for controlling multiple Unity projects at once.
 - 🔗 **Stable Long Connections**: Configurable request timeout (default 15 minutes), automatic recovery after Domain Reload.
@@ -120,6 +120,7 @@ This project has been deeply optimized for the following environments (tools not
 | **Claude Code** | ✅ Supported | Intelligent Skill intent recognition, supports complex multi-step automation |
 | **Codex** | ✅ Supported | Supports `$skill` explicit invocation and implicit intent recognition |
 | **Cursor** | ✅ Supported | Auto-discovers skill directories; supports `/skill-name` explicit invocation |
+| **GitHub Copilot** | ✅ Supported | VS Code Copilot discovers `.github/skills/` (project) and `~/.copilot/skills/` (personal); skills also appear as `/` commands |
 | **Kimi Code** | ✅ Supported | Native skill directory discovery; supports `/skill:unity-skills` explicit invocation |
 | **OpenCode** | ✅ Supported | Native workspace and global skill directory discovery |
 
@@ -184,7 +185,7 @@ If one-click installation is not supported or preferred, follow this **standard 
    ```json
    {"agentId": "your-agent-name", "installedAt": "2026-02-11T00:00:00Z"}
    ```
-   Replace `your-agent-name` with the name of your AI tool (e.g., `claude-code`, `antigravity`, `codex`, `cursor`).
+   Replace `your-agent-name` with the name of your AI tool (e.g., `claude-code`, `copilot`, `antigravity`, `codex`, `cursor`).
 5. **Directory Structure Requirements**: After copying, maintain the structure as follows (example):
    - `unity-skills/SKILL.md`
    - `unity-skills/skills/`
@@ -201,6 +202,7 @@ The following are verified default directories (if the tool has a custom path co
 - Antigravity: `~/.gemini/antigravity/skills/` (global) or `.agents/skills/` (workspace)
 - OpenAI Codex: `~/.agents/skills/` (global) or `.agents/skills/` (workspace, shared with Antigravity)
 - Cursor: `~/.cursor/skills/` (global) or `.cursor/skills/` (workspace); also auto-discovers `.agents/skills/`
+- GitHub Copilot: `~/.copilot/skills/` (global, or `$COPILOT_HOME/skills/`) or `.github/skills/` (workspace)
 - OpenCode: `~/.config/opencode/skills/` (global) or `.opencode/skills/` (workspace)
 - Kimi Code: `~/.kimi-code/skills/` (global, or `$KIMI_CODE_HOME/skills/`) or `.kimi-code/skills/` (project); also auto-discovers `.agents/skills/`
 

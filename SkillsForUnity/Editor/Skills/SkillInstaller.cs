@@ -11,13 +11,19 @@ using Newtonsoft.Json.Linq;
 namespace UnitySkills
 {
     /// <summary>
-    /// One-click skill installer for mainstream AI IDEs: Claude Code, Antigravity, Codex, Cursor, OpenCode, Kimi Code.
+    /// One-click skill installer for mainstream AI IDEs: Claude Code, GitHub Copilot, Antigravity, Codex, Cursor, OpenCode, Kimi Code.
     /// </summary>
     public static class SkillInstaller
     {
         // Claude Code path: Claude accepts any folder name
         public static string ClaudeProjectPath => Path.Combine(Application.dataPath, "..", ".claude", "skills", "unity-skills");
         public static string ClaudeGlobalPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".claude", "skills", "unity-skills");
+
+        // GitHub Copilot path - https://code.visualstudio.com/docs/agent-customization/agent-skills
+        // VS Code Copilot discovers project skills under .github/skills and personal skills under ~/.copilot/skills.
+        // The Copilot CLI relocates its home with $COPILOT_HOME.
+        public static string CopilotProjectPath => Path.Combine(Application.dataPath, "..", ".github", "skills", "unity-skills");
+        public static string CopilotGlobalPath => Path.Combine(CopilotHome, "skills", "unity-skills");
 
         // Antigravity path - https://antigravity.google/docs/skills
         // The workspace path is shared with Codex via .agents/skills (the open Agent Skills standard)
@@ -51,29 +57,36 @@ namespace UnitySkills
         /// from a shell that exported this variable; otherwise falls back to the documented default.
         /// Internal so AgentInstructionService can point at the same home for the AGENTS.md guide line.
         /// </summary>
-        internal static string KimiCodeHome
+        internal static string KimiCodeHome => ResolveHome("KIMI_CODE_HOME", ".kimi-code");
+
+        /// <summary>
+        /// Resolves $COPILOT_HOME (default ~/.copilot). The Copilot CLI stores personal skills and
+        /// user-level instructions under this directory instead of ~/.copilot.
+        /// </summary>
+        internal static string CopilotHome => ResolveHome("COPILOT_HOME", ".copilot");
+
+        private static string ResolveHome(string envVar, string defaultFolderName)
         {
-            get
-            {
-                var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                var configured = Environment.GetEnvironmentVariable("KIMI_CODE_HOME");
-                if (string.IsNullOrWhiteSpace(configured))
-                    return Path.Combine(home, ".kimi-code");
+            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var configured = Environment.GetEnvironmentVariable(envVar);
+            if (string.IsNullOrWhiteSpace(configured))
+                return Path.Combine(home, defaultFolderName);
 
-                configured = configured.Trim();
-                // A shell doesn't expand a leading "~" when it's inside quotes, so it's handled here manually,
-                // otherwise a directory literally named "~" would get created next to the project.
-                if (configured == "~")
-                    return home;
-                if (configured.StartsWith("~/", StringComparison.Ordinal) || configured.StartsWith("~\\", StringComparison.Ordinal))
-                    return Path.Combine(home, configured.Substring(2));
+            configured = configured.Trim();
+            // A shell doesn't expand a leading "~" when it's inside quotes, so it's handled here manually,
+            // otherwise a directory literally named "~" would get created next to the project.
+            if (configured == "~")
+                return home;
+            if (configured.StartsWith("~/", StringComparison.Ordinal) || configured.StartsWith("~\\", StringComparison.Ordinal))
+                return Path.Combine(home, configured.Substring(2));
 
-                return configured;
-            }
+            return configured;
         }
 
         public static bool IsClaudeProjectInstalled => Directory.Exists(ClaudeProjectPath) && File.Exists(Path.Combine(ClaudeProjectPath, "SKILL.md"));
         public static bool IsClaudeGlobalInstalled => Directory.Exists(ClaudeGlobalPath) && File.Exists(Path.Combine(ClaudeGlobalPath, "SKILL.md"));
+        public static bool IsCopilotProjectInstalled => Directory.Exists(CopilotProjectPath) && File.Exists(Path.Combine(CopilotProjectPath, "SKILL.md"));
+        public static bool IsCopilotGlobalInstalled => Directory.Exists(CopilotGlobalPath) && File.Exists(Path.Combine(CopilotGlobalPath, "SKILL.md"));
         public static bool IsAntigravityProjectInstalled => Directory.Exists(AntigravityProjectPath) && File.Exists(Path.Combine(AntigravityProjectPath, "SKILL.md"));
         public static bool IsAntigravityGlobalInstalled => Directory.Exists(AntigravityGlobalPath) && File.Exists(Path.Combine(AntigravityGlobalPath, "SKILL.md"));
         public static bool IsCodexProjectInstalled => Directory.Exists(CodexProjectPath) && File.Exists(Path.Combine(CodexProjectPath, "SKILL.md"));
@@ -92,6 +105,20 @@ namespace UnitySkills
                 var targetPath = global ? ClaudeGlobalPath : ClaudeProjectPath;
                 return InstallSkill(targetPath, "Claude Code", AgentInstructionService.AgentClaudeCode,
                     AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentClaudeCode, global));
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        public static (bool success, string message) InstallCopilot(bool global)
+        {
+            try
+            {
+                var targetPath = global ? CopilotGlobalPath : CopilotProjectPath;
+                return InstallSkill(targetPath, "GitHub Copilot", AgentInstructionService.AgentCopilot,
+                    AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentCopilot, global));
             }
             catch (Exception ex)
             {
@@ -119,6 +146,19 @@ namespace UnitySkills
             {
                 var targetPath = global ? ClaudeGlobalPath : ClaudeProjectPath;
                 return UninstallSkill(targetPath, "Claude Code");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        public static (bool success, string message) UninstallCopilot(bool global)
+        {
+            try
+            {
+                var targetPath = global ? CopilotGlobalPath : CopilotProjectPath;
+                return UninstallSkill(targetPath, "GitHub Copilot");
             }
             catch (Exception ex)
             {
@@ -266,7 +306,7 @@ namespace UnitySkills
         }
 
         /// <summary>
-        /// Enumerates all built-in install targets (6 tools x project/global scope).
+        /// Enumerates all built-in install targets (7 tools x project/global scope).
         /// Note that Codex and Antigravity's project-level paths are both .agents/skills (a shared directory per the open standard); callers that need to de-duplicate by path
         /// must handle that themselves.
         /// </summary>
@@ -274,6 +314,8 @@ namespace UnitySkills
         {
             yield return MakeTarget(AgentInstructionService.AgentClaudeCode, false, "Claude Code (Project)", ClaudeProjectPath, () => IsClaudeProjectInstalled, () => InstallClaude(false));
             yield return MakeTarget(AgentInstructionService.AgentClaudeCode, true, "Claude Code (Global)", ClaudeGlobalPath, () => IsClaudeGlobalInstalled, () => InstallClaude(true));
+            yield return MakeTarget(AgentInstructionService.AgentCopilot, false, "GitHub Copilot (Project)", CopilotProjectPath, () => IsCopilotProjectInstalled, () => InstallCopilot(false));
+            yield return MakeTarget(AgentInstructionService.AgentCopilot, true, "GitHub Copilot (Global)", CopilotGlobalPath, () => IsCopilotGlobalInstalled, () => InstallCopilot(true));
             yield return MakeTarget(AgentInstructionService.AgentCodex, false, "Codex (Project)", CodexProjectPath, () => IsCodexProjectInstalled, () => InstallCodex(false));
             yield return MakeTarget(AgentInstructionService.AgentCodex, true, "Codex (Global)", CodexGlobalPath, () => IsCodexGlobalInstalled, () => InstallCodex(true));
             yield return MakeTarget(AgentInstructionService.AgentAntigravity, false, "Antigravity (Project)", AntigravityProjectPath, () => IsAntigravityProjectInstalled, () => InstallAntigravity(false));
