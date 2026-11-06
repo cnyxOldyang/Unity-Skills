@@ -24,6 +24,7 @@ namespace UnitySkills
     ///   Claude Code  project: CLAUDE.md                 global: ~/.claude/CLAUDE.md
     ///   GitHub Copilot project: .github/copilot-instructions.md global: ~/.copilot/copilot-instructions.md
     ///   Codex        project: AGENTS.md                 global: $CODEX_HOME/AGENTS.md (~/.codex)
+    ///   DeepSeek Harness project: AGENTS.md             global: $DSH_HOME/AGENTS.md (~/.dsh)
     ///   Antigravity  project: AGENTS.md                 global: ~/.gemini/GEMINI.md (shared with Gemini CLI)
     ///   Cursor       project: AGENTS.md                 global: none reliable (~/.cursor/rules is not auto-loaded)
     ///   OpenCode     project: AGENTS.md                 global: ~/.config/opencode/AGENTS.md
@@ -34,6 +35,7 @@ namespace UnitySkills
         internal const string AgentClaudeCode = "ClaudeCode";
         internal const string AgentCopilot = "Copilot";
         internal const string AgentCodex = "Codex";
+        internal const string AgentDeepSeekHarness = "DeepSeekHarness";
         internal const string AgentAntigravity = "Antigravity";
         internal const string AgentCursor = "Cursor";
         internal const string AgentOpenCode = "OpenCode";
@@ -41,7 +43,7 @@ namespace UnitySkills
 
         internal static readonly string[] KnownAgentIds =
         {
-            AgentClaudeCode, AgentCopilot, AgentCodex, AgentAntigravity, AgentCursor, AgentOpenCode, AgentKimiCode
+            AgentClaudeCode, AgentCopilot, AgentCodex, AgentDeepSeekHarness, AgentAntigravity, AgentCursor, AgentOpenCode, AgentKimiCode
         };
 
         // Single short English line on purpose: instruction files outlive any panel language choice,
@@ -100,6 +102,12 @@ namespace UnitySkills
                 case AgentCodex:
                     return global
                         ? Path.Combine(ResolveEnvHome("CODEX_HOME", ".codex"), "AGENTS.md")
+                        : Path.Combine(ProjectRoot, "AGENTS.md");
+                case AgentDeepSeekHarness:
+                    // The harness loads the user-global chain from $DSH_HOME/AGENTS.md, and the project chain
+                    // from AGENTS.md / CLAUDE.md in every directory between the project root and the workdir.
+                    return global
+                        ? Path.Combine(SkillInstaller.DeepSeekHarnessHome, "AGENTS.md")
                         : Path.Combine(ProjectRoot, "AGENTS.md");
                 case AgentAntigravity:
                     return global

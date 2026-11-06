@@ -61,7 +61,7 @@
 - 🛠️ **839 REST Skills 全能库**：56 个源文件、54 个分类，另有 29 个 advisory 设计模块，支持 Batch 批处理。
 - ⚡ **支持UnityCLI**：支持绑定UnityCLI，对应项目冷启动，不用开启UnityHub
 - 🔐 **三档权限模式**：Approval / Auto / Bypass + 双轨审批，对齐 Claude Code permission modes。
-- 🤖 **7 大 IDE 原生支持**：Claude Code / GitHub Copilot / Antigravity / Codex / Cursor / OpenCode / Kimi Code，一键安装即用。
+- 🤖 **8 大 IDE 原生支持**：Claude Code / GitHub Copilot / Antigravity / Codex / DeepSeek Harness / Cursor / OpenCode / Kimi Code，一键安装即用。
 - 🛡️ **事务原子性**：操作失败自动回滚，场景永不残留。
 - 🌍 **多实例同时控制**：自动端口发现与全局注册表，同时操控多个 Unity 项目。
 - 🔗 **超长稳定连接**：请求超时可配（默认 15 分钟），Domain Reload 后自动恢复。
@@ -120,6 +120,7 @@ UnitySkills 引入真正的服务端权限系统，对齐 Claude Code permission
 | **Claude Code** | ✅ 支持 | 智能识别 Skill 意图，支持复杂多步自动化 |
 | **Codex** | ✅ 支持 | 支持 `$skill` 显式调用和隐式意图识别 |
 | **Cursor** | ✅ 支持 | 自动扫描技能目录，支持 `/skill-name` 显式触发 |
+| **DeepSeek Harness** | ✅ 支持 | 原生 Agent Skills 目录扫描（项目 `.dsh/skills/`、用户 `$DSH_HOME/skills/`），技能按需加载进会话目录 |
 | **GitHub Copilot** | ✅ 支持 | VS Code Copilot 原生扫描 `.github/skills/`（项目）与 `~/.copilot/skills/`（个人），技能也会出现在 `/` 命令列表 |
 | **Kimi Code** | ✅ 支持 | 原生技能目录扫描，支持 `/skill:unity-skills` 显式触发 |
 | **OpenCode** | ✅ 支持 | 原生扫描工作区与全局技能目录 |
@@ -202,6 +203,7 @@ https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.0
 - Antigravity：`~/.gemini/antigravity/skills/`（全局）或 `.agents/skills/`（工作区）
 - OpenAI Codex：`~/.agents/skills/`（全局）或 `.agents/skills/`（工作区，与 Antigravity 共享）
 - Cursor：`~/.cursor/skills/`（全局）或 `.cursor/skills/`（工作区）；也会自动扫描 `.agents/skills/`
+- DeepSeek Harness：`~/.dsh/skills/`（全局，或 `$DSH_HOME/skills/`）或 `.dsh/skills/`（工作区）；也会扫描 `.agents/skills/`
 - GitHub Copilot：`~/.copilot/skills/`（全局，或 `$COPILOT_HOME/skills/`）或 `.github/skills/`（工作区）
 - OpenCode：`~/.config/opencode/skills/`（全局）或 `.opencode/skills/`（工作区）
 - Kimi Code：`~/.kimi-code/skills/`（全局，或 `$KIMI_CODE_HOME/skills/`）或 `.kimi-code/skills/`（项目）；也会自动扫描 `.agents/skills/`

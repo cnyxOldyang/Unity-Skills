@@ -292,6 +292,7 @@ namespace UnitySkills
             ("copilot", "Copilot"), ("github-copilot", "Copilot"),
             ("claude", "ClaudeCode"), ("anthropic", "ClaudeCode"),
             ("codex", "Codex"), ("openai", "Codex"),
+            ("deepseek", "DeepSeekHarness"), ("dsh", "DeepSeekHarness"),
             ("cursor", "Cursor"),
             ("trae", "Trae"), ("bytedance", "Trae"),
             ("antigravity", "Antigravity"),

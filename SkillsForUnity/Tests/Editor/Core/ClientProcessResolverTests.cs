@@ -305,6 +305,9 @@ namespace UnitySkills.Tests.Core
         [TestCase("codex", "Codex")]
         [TestCase("codex-command-runner", "Codex")] // Codex CLI/App run shell commands through this bundled helper
         [TestCase("codex-code-mode-host", "Codex")]
+        [TestCase("deepseek harness", "DeepSeekHarness")] // the desktop app's main exe is literally "DeepSeek Harness.exe"
+        [TestCase("DeepSeek-Harness", "DeepSeekHarness")]
+        [TestCase("dsh", "DeepSeekHarness")] // npm @deepseek-ai/dsh bin name
         [TestCase("amazon-q", "AmazonQ")]
         [TestCase("code", "VSCode")]
         [TestCase("gemini", "GeminiCLI")]
@@ -364,6 +367,15 @@ namespace UnitySkills.Tests.Core
 
             var cursor = ClientProcessResolver.NormalizeProcessName("Cursor Helper (Renderer)");
             Assert.That(ClientProcessResolver.NormalizeDisplayName(cursor), Is.EqualTo("Cursor"));
+
+            // A two-word Electron host: the suffix strip leaves "DeepSeek Harness", which must still hit its
+            // exact map entry rather than falling through to the sanitized "DeepSeekHarness" string by luck.
+            foreach (var role in new[] { "DeepSeek Harness Helper", "DeepSeek Harness Helper (Renderer)", "DeepSeek Harness Helper (GPU)" })
+            {
+                var host = ClientProcessResolver.NormalizeProcessName(role);
+                Assert.That(host, Is.EqualTo("DeepSeek Harness"), role);
+                Assert.That(ClientProcessResolver.NormalizeDisplayName(host), Is.EqualTo("DeepSeekHarness"), role);
+            }
 
             // Unmapped host: still collapses to one identity, sanitized for the JSONL.
             var unmapped = ClientProcessResolver.NormalizeProcessName("My Space Helper (Plugin)");
@@ -757,6 +769,8 @@ namespace UnitySkills.Tests.Core
         [TestCase("Claude", "ClaudeCode")]
         [TestCase("copilot", "Copilot")]
         [TestCase("GitHub-Copilot", "Copilot")]
+        [TestCase("dsh", "DeepSeekHarness")]
+        [TestCase("DeepSeekHarness", "DeepSeekHarness")]
         [TestCase("agy", "Antigravity")]
         [TestCase("ClaudeCode", "ClaudeCode")]
         [TestCase("MyScript", "MyScript")] // custom ids are the caller's own

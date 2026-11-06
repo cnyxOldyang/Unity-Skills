@@ -108,6 +108,13 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    # A Windows console falls back to the ANSI code page (cp936 on zh-CN) the moment the streams are
+    # redirected, and this report is emoji + Chinese: the first print() would raise UnicodeEncodeError and
+    # exit 1 before any check ran. Force UTF-8 so a local run behaves exactly like the UTF-8 CI runner.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
     args = parse_args()
     repo_root = Path(args.repo_root).resolve()
 

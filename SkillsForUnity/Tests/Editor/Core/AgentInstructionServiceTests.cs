@@ -234,7 +234,8 @@ namespace UnitySkills.Tests.Core
 
             foreach (var agentId in new[]
                      {
-                         AgentInstructionService.AgentCodex, AgentInstructionService.AgentAntigravity,
+                         AgentInstructionService.AgentCodex, AgentInstructionService.AgentDeepSeekHarness,
+                         AgentInstructionService.AgentAntigravity,
                          AgentInstructionService.AgentCursor, AgentInstructionService.AgentOpenCode,
                          AgentInstructionService.AgentKimiCode
                      })
@@ -258,6 +259,8 @@ namespace UnitySkills.Tests.Core
             Assert.That(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentOpenCode, true),
                 Is.EqualTo(Path.Combine(home, ".config", "opencode", "AGENTS.md")));
             Assert.That(Path.GetFileName(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentCodex, true)),
+                Is.EqualTo("AGENTS.md"));
+            Assert.That(Path.GetFileName(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentDeepSeekHarness, true)),
                 Is.EqualTo("AGENTS.md"));
             Assert.That(Path.GetFileName(AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentKimiCode, true)),
                 Is.EqualTo("AGENTS.md"));

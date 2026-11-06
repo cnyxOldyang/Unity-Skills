@@ -819,6 +819,12 @@ namespace UnitySkills
             // The Codex CLI (npm @openai/codex) and the standalone Codex app both run shell commands through
             // these bundled helper binaries instead of codex.exe directly -- the walk hits them first.
             ("codex-command-runner", "Codex"), ("codex-code-mode-host", "Codex"),
+            // DeepSeek Harness: the desktop app's main exe is literally "DeepSeek Harness.exe" (and its
+            // "... Helper (Renderer)" children collapse to it), while the CLI/SDK is shipped as @deepseek-ai/dsh.
+            // The harness's own tools call the REST server straight from that Electron process with no
+            // User-Agent, so this map entry is the only thing that attributes them.
+            ("deepseek harness", "DeepSeekHarness"), ("deepseek-harness", "DeepSeekHarness"),
+            ("dsh", "DeepSeekHarness"),
             ("cursor", "Cursor"),
             ("antigravity", "Antigravity"), ("agy", "Antigravity"), // agy = Antigravity CLI's actual binary name (Go/Mach-O, confirmed live)
             ("antigravity ide", "Antigravity"), // the Windows IDE's main exe is literally "Antigravity IDE.exe"

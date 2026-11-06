@@ -9,7 +9,7 @@ namespace UnitySkills
 {
     /// <summary>
     /// AI Config Tab — one card per supported Agent (Claude Code / GitHub Copilot /
-    /// Antigravity / Codex / Cursor / OpenCode / Kimi Code) plus a Custom Agent card.
+    /// Antigravity / Codex / DeepSeek Harness / Cursor / OpenCode / Kimi Code) plus a Custom Agent card.
     /// Cards are built dynamically so adding a new agent only requires one
     /// entry in _agentConfigs.
     /// </summary>
@@ -100,6 +100,16 @@ namespace UnitySkills
                     getInstallSuccessMsg = (global, msg) =>
                         string.Format(SkillsLocalization.Get("agent_codex_install_success_fmt"), msg)
                         + (global ? "" : SkillsLocalization.Get("agent_codex_install_note"))
+                },
+                new AgentConfig
+                {
+                    id = "deepseekharness", brandClass = "brand-deepseekharness",
+                    nameDisplay = "DeepSeek Harness",
+                    isProjInstalled = () => SkillInstaller.IsDeepSeekHarnessProjectInstalled,
+                    isGlobInstalled = () => SkillInstaller.IsDeepSeekHarnessGlobalInstalled,
+                    getPath = global => global ? SkillInstaller.DeepSeekHarnessGlobalPath : SkillInstaller.DeepSeekHarnessProjectPath,
+                    installFunc = SkillInstaller.InstallDeepSeekHarness,
+                    uninstallFunc = SkillInstaller.UninstallDeepSeekHarness
                 },
                 new AgentConfig
                 {

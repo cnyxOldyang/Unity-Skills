@@ -37,6 +37,13 @@ def iter_files(scan_root: str):
 
 
 def main() -> int:
+    # A Windows console falls back to the ANSI code page (cp936 on zh-CN) the moment the streams are
+    # redirected, and this report is emoji + Chinese: the first print() would raise UnicodeEncodeError and
+    # exit 1 before any check ran. Force UTF-8 so a local run behaves exactly like the UTF-8 CI runner.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
     repo_root = sys.argv[1] if len(sys.argv) > 1 else "."
     scan_root = os.path.join(repo_root, SCAN_ROOT_REL)
 

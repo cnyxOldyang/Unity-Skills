@@ -11,7 +11,8 @@ using Newtonsoft.Json.Linq;
 namespace UnitySkills
 {
     /// <summary>
-    /// One-click skill installer for mainstream AI IDEs: Claude Code, GitHub Copilot, Antigravity, Codex, Cursor, OpenCode, Kimi Code.
+    /// One-click skill installer for mainstream AI IDEs: Claude Code, GitHub Copilot, Antigravity, Codex,
+    /// DeepSeek Harness, Cursor, OpenCode, Kimi Code.
     /// </summary>
     public static class SkillInstaller
     {
@@ -34,6 +35,15 @@ namespace UnitySkills
         // The workspace path is shared with Antigravity via .agents/skills (the open Agent Skills standard)
         public static string CodexProjectPath => Path.Combine(Application.dataPath, "..", ".agents", "skills", "unity-skills");
         public static string CodexGlobalPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".agents", "skills", "unity-skills");
+
+        // DeepSeek Harness path - https://github.com/deepseek-ai/dsh (skills are <root>/<name>/SKILL.md, one level deep)
+        // The harness scans .dsh/skills (rank 100) and .agents/skills (rank 200) in the project, and
+        // $DSH_HOME/skills (rank 400) plus ~/.agents/skills (rank 500) in the user scope. This points only at its
+        // own dedicated directory, so install state and uninstall stay independent of Codex/Antigravity; a copy
+        // installed under .agents/skills is still picked up incidentally by the harness at the lower rank.
+        // The user-level root follows $DSH_HOME (default ~/.dsh).
+        public static string DeepSeekHarnessProjectPath => Path.Combine(Application.dataPath, "..", ".dsh", "skills", "unity-skills");
+        public static string DeepSeekHarnessGlobalPath => Path.Combine(DeepSeekHarnessHome, "skills", "unity-skills");
 
         // Cursor path - https://cursor.com/docs/context/skills
         public static string CursorProjectPath => Path.Combine(Application.dataPath, "..", ".cursor", "skills", "unity-skills");
@@ -65,6 +75,14 @@ namespace UnitySkills
         /// </summary>
         internal static string CopilotHome => ResolveHome("COPILOT_HOME", ".copilot");
 
+        /// <summary>
+        /// Resolves $DSH_HOME (default ~/.dsh). The DeepSeek Harness keeps its user-scope skills under
+        /// <c>&lt;DSH_HOME&gt;/skills</c> and its user-global instruction file at <c>&lt;DSH_HOME&gt;/AGENTS.md</c>,
+        /// so both follow the variable. Only visible when Unity inherited it from a shell; otherwise the
+        /// documented default applies.
+        /// </summary>
+        internal static string DeepSeekHarnessHome => ResolveHome("DSH_HOME", ".dsh");
+
         private static string ResolveHome(string envVar, string defaultFolderName)
         {
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -91,6 +109,8 @@ namespace UnitySkills
         public static bool IsAntigravityGlobalInstalled => Directory.Exists(AntigravityGlobalPath) && File.Exists(Path.Combine(AntigravityGlobalPath, "SKILL.md"));
         public static bool IsCodexProjectInstalled => Directory.Exists(CodexProjectPath) && File.Exists(Path.Combine(CodexProjectPath, "SKILL.md"));
         public static bool IsCodexGlobalInstalled => Directory.Exists(CodexGlobalPath) && File.Exists(Path.Combine(CodexGlobalPath, "SKILL.md"));
+        public static bool IsDeepSeekHarnessProjectInstalled => Directory.Exists(DeepSeekHarnessProjectPath) && File.Exists(Path.Combine(DeepSeekHarnessProjectPath, "SKILL.md"));
+        public static bool IsDeepSeekHarnessGlobalInstalled => Directory.Exists(DeepSeekHarnessGlobalPath) && File.Exists(Path.Combine(DeepSeekHarnessGlobalPath, "SKILL.md"));
         public static bool IsCursorProjectInstalled => Directory.Exists(CursorProjectPath) && File.Exists(Path.Combine(CursorProjectPath, "SKILL.md"));
         public static bool IsCursorGlobalInstalled => Directory.Exists(CursorGlobalPath) && File.Exists(Path.Combine(CursorGlobalPath, "SKILL.md"));
         public static bool IsOpenCodeProjectInstalled => Directory.Exists(OpenCodeProjectPath) && File.Exists(Path.Combine(OpenCodeProjectPath, "SKILL.md"));
@@ -206,6 +226,33 @@ namespace UnitySkills
             }
         }
 
+        public static (bool success, string message) InstallDeepSeekHarness(bool global)
+        {
+            try
+            {
+                var targetPath = global ? DeepSeekHarnessGlobalPath : DeepSeekHarnessProjectPath;
+                return InstallSkill(targetPath, "DeepSeek Harness", AgentInstructionService.AgentDeepSeekHarness,
+                    AgentInstructionService.GetInstructionFilePath(AgentInstructionService.AgentDeepSeekHarness, global));
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        public static (bool success, string message) UninstallDeepSeekHarness(bool global)
+        {
+            try
+            {
+                var targetPath = global ? DeepSeekHarnessGlobalPath : DeepSeekHarnessProjectPath;
+                return UninstallSkill(targetPath, "DeepSeek Harness");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
         public static (bool success, string message) InstallCursor(bool global)
         {
             try
@@ -306,7 +353,7 @@ namespace UnitySkills
         }
 
         /// <summary>
-        /// Enumerates all built-in install targets (7 tools x project/global scope).
+        /// Enumerates all built-in install targets (8 tools x project/global scope).
         /// Note that Codex and Antigravity's project-level paths are both .agents/skills (a shared directory per the open standard); callers that need to de-duplicate by path
         /// must handle that themselves.
         /// </summary>
@@ -318,6 +365,8 @@ namespace UnitySkills
             yield return MakeTarget(AgentInstructionService.AgentCopilot, true, "GitHub Copilot (Global)", CopilotGlobalPath, () => IsCopilotGlobalInstalled, () => InstallCopilot(true));
             yield return MakeTarget(AgentInstructionService.AgentCodex, false, "Codex (Project)", CodexProjectPath, () => IsCodexProjectInstalled, () => InstallCodex(false));
             yield return MakeTarget(AgentInstructionService.AgentCodex, true, "Codex (Global)", CodexGlobalPath, () => IsCodexGlobalInstalled, () => InstallCodex(true));
+            yield return MakeTarget(AgentInstructionService.AgentDeepSeekHarness, false, "DeepSeek Harness (Project)", DeepSeekHarnessProjectPath, () => IsDeepSeekHarnessProjectInstalled, () => InstallDeepSeekHarness(false));
+            yield return MakeTarget(AgentInstructionService.AgentDeepSeekHarness, true, "DeepSeek Harness (Global)", DeepSeekHarnessGlobalPath, () => IsDeepSeekHarnessGlobalInstalled, () => InstallDeepSeekHarness(true));
             yield return MakeTarget(AgentInstructionService.AgentAntigravity, false, "Antigravity (Project)", AntigravityProjectPath, () => IsAntigravityProjectInstalled, () => InstallAntigravity(false));
             yield return MakeTarget(AgentInstructionService.AgentAntigravity, true, "Antigravity (Global)", AntigravityGlobalPath, () => IsAntigravityGlobalInstalled, () => InstallAntigravity(true));
             yield return MakeTarget(AgentInstructionService.AgentCursor, false, "Cursor (Project)", CursorProjectPath, () => IsCursorProjectInstalled, () => InstallCursor(false));
